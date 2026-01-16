@@ -3,6 +3,11 @@ from datetime import datetime
 from config import DATABASE 
 import os
 import cv2
+import numpy as np
+import os
+from logic import *
+from math import sqrt, ceil, floor
+
 
 class DatabaseManager:
     def __init__(self, database):
@@ -113,6 +118,16 @@ INNER JOIN winners ON winners.user_id = users.user_id
 GROUP BY users.user_id
 ORDER BY COUNT(prize_id) DESC LIMIT 10
     ''')
+            
+    def get_winners_img(self, user_id):
+        conn = sqlite3.connect(self.database)
+        with conn:
+            cur = conn.cursor()
+            cur.execute(''' 
+    SELECT image FROM winners 
+    INNER JOIN prizes ON 
+    winners.prize_id = prizes.prize_id
+    WHERE user_id = ?''', (user_id, ))
             return cur.fetchall()
         
 
@@ -122,6 +137,8 @@ def hide_img(img_name):
     pixelated_image = cv2.resize(blurred_image, (30, 30), interpolation=cv2.INTER_NEAREST)
     pixelated_image = cv2.resize(pixelated_image, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
     cv2.imwrite(f'hidden_img/{img_name}', pixelated_image)
+
+
 
 if __name__ == '__main__':
     manager = DatabaseManager(DATABASE)
