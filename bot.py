@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands, tasks
+from flask import ctx
 from logic import DatabaseManager, hide_img
 from config import TOKEN, DATABASE
 import os
@@ -119,8 +120,18 @@ async def get_my_score(ctx):
     os.remove(output_path)
 
 
+@bot.command()
+async def commands(ctx):
+    commands_list = """
+    !start - Mendaftar sebagai pengguna bot lelangan gambar tersembunyi.
+    !rating - Melihat peringkat pengguna berdasarkan jumlah hadiah yang dimenangkan.
+    !get_my_score - Mendapatkan kolase gambar hadiah yang telah kamu menangkan."""
+    await ctx.send(f"Daftar perintah yang tersedia:\n{commands_list}")
+
 @bot.event
 async def on_ready():
+    channel = bot.get_channel(1339936920897327189)
+    await channel.send("Hai! Aku adalah bot lelangan gambar tersembunyi! Gunakan perintah !commands untuk melihat daftar perintah yang tersedia.")
     print(f'Logged in as {bot.user}!')
     if not send_message.is_running():
         send_message.start()
