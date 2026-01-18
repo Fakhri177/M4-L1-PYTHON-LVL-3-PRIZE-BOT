@@ -118,6 +118,7 @@ INNER JOIN winners ON winners.user_id = users.user_id
 GROUP BY users.user_id
 ORDER BY COUNT(prize_id) DESC LIMIT 10
     ''')
+            return cur.fetchall()
             
     def get_winners_img(self, user_id):
         conn = sqlite3.connect(self.database)
@@ -146,3 +147,4 @@ if __name__ == '__main__':
     prizes_img = os.listdir('img')
     data = [(x,) for x in prizes_img]
     manager.add_prize(data)
+
